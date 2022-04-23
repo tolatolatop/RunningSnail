@@ -1,0 +1,47 @@
+env:
+  potcar_dir: ./data
+
+runner:
+  post_sh: ./mytest.lsf
+
+jobs:
+  - vaspjobs:
+    name: Structure Optimization
+    input_collector_list:
+      - filecollector:
+          name: INCAR
+          path: ./INCAR
+      - filecollector:
+          name: POSCAR
+          path: ./poscar_all/*
+    result_collector_list:
+      - filecollector:
+          name: CONTCAR
+          path: ./CONTCAR
+
+  - vaspjobs:
+      name: Static Calculation
+      input_collector_list:
+        - filecollector:
+            name: POSCAR
+            path: Structure Optimization@CONTCAR
+      result_collector_list:
+        - filecollector:
+            name: WAVECAR
+            path: ./WAVECAR
+
+  - vaspjobs:
+      name: Optical Calculation
+      input_collector_list:
+        - filecollector:
+            name: POSCAR
+            path: Structure Optimization@POSCAR
+        - filecollector:
+            name: WAVECAR
+            path: Static Calculation@WAVECAR
+
+  - postjobs:
+      name: Transmission Optic
+
+
+
