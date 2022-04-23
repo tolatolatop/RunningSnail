@@ -23,6 +23,9 @@ jobs:
       name: Static Calculation
       input_collector_list:
         - filecollector:
+            name: INCAR
+            path: Structure Optimization@INCAR
+        - filecollector:
             name: POSCAR
             path: Structure Optimization@CONTCAR
       result_collector_list:
@@ -33,6 +36,9 @@ jobs:
   - vaspjobs:
       name: Optical Calculation
       input_collector_list:
+        - filecollector:
+            name: INCAR
+            path: Structure Optimization@INCAR
         - filecollector:
             name: POSCAR
             path: Structure Optimization@POSCAR
