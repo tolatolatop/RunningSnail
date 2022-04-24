@@ -1,53 +1,54 @@
 env:
   potcar_dir: ./data
+  workspace: /home/slave
 
 runner:
   post_sh: ./mytest.lsf
 
 jobs:
-  - vaspjobs:
+  - type: vaspjobs
     name: Structure Optimization
     input_collector_list:
-      - filecollector:
-          name: INCAR
-          path: ./INCAR
-      - filecollector:
-          name: POSCAR
-          path: ./poscar_all/*
+      - type: filecollector
+        name: INCAR
+        path: ./INCAR
+      - type: filecollector
+        name: POSCAR
+        path: ./poscar_all/*
     result_collector_list:
-      - filecollector:
-          name: CONTCAR
-          path: ./CONTCAR
+      - type: filecollector
+        name: CONTCAR
+        path: ./CONTCAR
 
-  - vaspjobs:
-      name: Static Calculation
-      input_collector_list:
-        - filecollector:
-            name: INCAR
-            path: Structure Optimization@INCAR
-        - filecollector:
-            name: POSCAR
-            path: Structure Optimization@CONTCAR
-      result_collector_list:
-        - filecollector:
-            name: WAVECAR
-            path: ./WAVECAR
+  - type: vaspjobs
+    name: Static Calculation
+    input_collector_list:
+      - type: filecollector
+        name: INCAR
+        path: Structure Optimization@INCAR
+      - type: filecollector
+        name: POSCAR
+        path: Structure Optimization@CONTCAR
+    result_collector_list:
+      - type: filecollector
+        name: WAVECAR
+        path: ./WAVECAR
 
-  - vaspjobs:
-      name: Optical Calculation
-      input_collector_list:
-        - filecollector:
-            name: INCAR
-            path: Structure Optimization@INCAR
-        - filecollector:
-            name: POSCAR
-            path: Structure Optimization@POSCAR
-        - filecollector:
-            name: WAVECAR
-            path: Static Calculation@WAVECAR
+  - type: vaspjobs
+    name: Optical Calculation
+    input_collector_list:
+      - type: filecollector
+        name: INCAR
+        path: Structure Optimization@INCAR
+      - type: filecollector
+        name: POSCAR
+        path: Structure Optimization@POSCAR
+      - type: filecollector
+        name: WAVECAR
+        path: Static Calculation@WAVECAR
 
-  - postjobs:
-      name: Transmission Optic
+  - type: postjobs
+    name: Transmission Optic
 
 
 

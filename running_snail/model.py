@@ -9,21 +9,18 @@ class Task(BaseModel):
 
 
 class Env(BaseModel):
-    value: str
-
-
-class PotcarEnv(Env):
-    potcar_dir: str
+    potcar_dir: str = '/data/potcar'
+    workspace: str = '/data'
 
 
 class VaspTask(Task):
     incar: str
     poscar: str
-    potcar: PotcarEnv
+    potcar: str
 
 
-class Runner(Task):
-    push_sh: str
+class Runner(BaseModel):
+    push_sh: str = 'push.sh'
 
 
 class Jobs(Task):
@@ -43,3 +40,9 @@ class VaspJobs(Jobs):
 
 class PostJobs(Jobs):
     name: str
+
+
+class PipeLine(BaseModel):
+    env: Env
+    runner: Runner
+    jobs: List[Jobs]
