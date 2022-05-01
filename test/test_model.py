@@ -9,8 +9,8 @@ class TestModel(unittest.TestCase):
         pipeline = Jobs(name='test_sub_job', task_list=[vasp_jobs])
         print(pipeline.json())
 
-        potcar = PotcarEnv(value='path')
-        self.assertEqual('path', potcar.value)
+        potcar = Env(potcar_dir='path')
+        self.assertEqual('path', potcar.potcar_dir)
 
 
 if __name__ == '__main__':
