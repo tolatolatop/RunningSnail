@@ -1,5 +1,7 @@
 import pathlib
 import shutil
+from itertools import count
+import subprocess as sp
 
 import yaml
 
@@ -61,13 +63,13 @@ def get_task_status():
     pass
 
 
-def generate_task_id():
+def generate_task_id(poscar_name):
     """
-    生成唯一id
+    生成唯一id structure_space_type_order
 
     :return:
     """
-    pass
+    return map(lambda x: '{}_{:04d}'.format(poscar_name, x), count())
 
 
 def init_pipeline_env(env):
