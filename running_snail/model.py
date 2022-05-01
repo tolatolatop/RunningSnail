@@ -8,6 +8,13 @@ class Task(BaseModel):
     status: str = 'wait'
 
 
+class TaskStatus(BaseModel):
+    path: str
+    task_id: str
+    type: str
+    status: str
+
+
 class Env(BaseModel):
     potcar_dir: str = '/data/potcar'
     workspace: str = '/data'

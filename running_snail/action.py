@@ -45,13 +45,23 @@ def prepare_potcar():
     pass
 
 
-def push_task():
+def push_task(workspace, cmd, push_script_code: str) -> str:
     """
     提交任务 返回任务id
 
     :return:
     """
-    pass
+    p = sp.Popen(cmd, shell=False, stdin=sp.PIPE, stderr=sp.STDOUT, stdout=sp.PIPE, cwd=workspace)
+    stdout, stderr = p.communicate(input=push_script_code.encode())
+    if p.returncode != 0:
+        err_msg = 'run [ %s < %s ] error, return %d %s' % (
+            ' '.join(cmd),
+            push_script_code,
+            p.returncode,
+            stdout.decode(),
+        )
+        return err_msg
+    return stdout.decode().strip()
 
 
 def get_task_status():

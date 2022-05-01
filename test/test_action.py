@@ -16,6 +16,10 @@ class TestAction(unittest.TestCase):
         pos = generate_task_id('base')
         self.assertEqual('base_0000', next(pos))
 
+    def test_push_task(self):
+        cmd = ['findstr', '123']
+        task_id = push_task('.', cmd, '123455')
+        self.assertEqual('123455', task_id)
 
 
 if __name__ == '__main__':
