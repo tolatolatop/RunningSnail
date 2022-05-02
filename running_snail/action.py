@@ -1,6 +1,7 @@
+import os
 import pathlib
 import shutil
-from itertools import count
+from itertools import product
 import subprocess as sp
 
 import yaml
@@ -27,13 +28,28 @@ def get_value():
     pass
 
 
-def create_task_dir():
+def create_task_dir(workspace: str, task_id: str, input_files: list, copy_mode=True):
     """
     创建文件夹 复制文件
 
     :return:
     """
-    pass
+    workspace = pathlib.Path(workspace)
+    workspace.mkdir(exist_ok=True, parents=True)
+    task_dir = workspace / task_id
+
+    task_dir.mkdir(exist_ok=True, parents=True)
+
+    for file_name, src_file_path in input_files:
+        src_file_path = pathlib.Path(src_file_path)
+        dst_file_path = task_dir / file_name
+
+        if copy_mode:
+            copy_files(src_file_path, dst_file_path)
+        else:
+            link_files(src_file_path, dst_file_path)
+
+    return str(task_dir.absolute())
 
 
 def prepare_potcar():
@@ -64,6 +80,35 @@ def push_task(workspace, cmd, push_script_code: str) -> str:
     return stdout.decode().strip()
 
 
+def load_task_status(task_status_file: pathlib.Path):
+    if task_status_file.is_file():
+        with task_status_file.open('r') as f:
+            return yaml.load(f, Loader=yaml.SafeLoader)
+    return []
+
+
+def query_task_status(cmd) -> dict:
+    """
+    返回状态
+
+    :return:
+    """
+    p = sp.Popen(cmd, shell=False, stdin=sp.PIPE, stderr=sp.STDOUT, stdout=sp.PIPE)
+    stdout, stderr = p.communicate()
+    if p.returncode != 0:
+        err_msg = 'run [ %s ] error, return %d %s' % (
+            ' '.join(cmd),
+            p.returncode,
+            stdout.decode(),
+        )
+        raise RuntimeError(err_msg)
+    return {}
+
+
+def write_task_status(task_status_file: pathlib.Path, task_status: list):
+    with task_status_file.open('w') as f:
+        return yaml.dump(task_status, f, yaml.SafeDumper)
+
 def get_task_status():
     """
     获取任务状态
@@ -73,13 +118,14 @@ def get_task_status():
     pass
 
 
-def generate_task_id(poscar_name):
+def generate_task_id(poscar_name, count):
     """
     生成唯一id structure_space_type_order
 
     :return:
     """
-    return map(lambda x: '{}_{:04d}'.format(poscar_name, x), count())
+    task_id_list = ['{}_{:04d}'.format(poscar_name, i) for i in range(count)]
+    return task_id_list
 
 
 def init_pipeline_env(env):
@@ -88,6 +134,7 @@ def init_pipeline_env(env):
     :param env:
     :return:
     """
+    # TODO: 需要解耦
     if not pathlib.Path(env.potcar_dir).is_dir():
         raise ValueError('POTCAR目录 %s 不存在', env.potcar_dir)
 
@@ -105,6 +152,48 @@ def init_pipeline_runner(runner):
     :param runner:
     :return:
     """
+    # TODO: 需要解耦
     push_sh = pathlib.Path(runner.push_sh)
     if not push_sh.exists():
         raise ValueError('找不到提交脚本 %s', str(push_sh.absolute()))
+
+
+def load_files(path, glob):
+    path = pathlib.Path(path)
+    return list(str(f.absolute()) for f in path.glob(glob))
+
+
+def link_files(src: pathlib.Path, dst: pathlib.Path):
+    dst.symlink_to(src)
+
+
+def copy_files(src: pathlib.Path, dst: pathlib.Path):
+    shutil.copyfile(src, dst)
+
+
+def load_file_collections(file_collector_list):
+    """
+
+    :param file_collector_list:
+    :return:
+    """
+    collections = {}
+    for collector in file_collector_list:
+        files = load_files('.', collector.path)
+        collections[collector.name] = files
+    return collections
+
+
+def create_input_args_batch(input_args: dict):
+    """
+    任务组合
+
+    :return:
+    """
+    input_args_batch = product(*input_args.values())
+    return tuple(tuple(zip(input_args.keys(), arg)) for arg in input_args_batch)
+
+
+def get_push_script_code(path):
+    with open(path, 'r', encoding='utf-8') as f:
+        return f.read()
