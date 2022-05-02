@@ -1,9 +1,9 @@
 env:
-  potcar_dir: ./data
-  workspace: /home/slave
+  potcar_dir: ./data/test_pipeline/potcar
+  workspace: /tmp/test_pipeline
 
 runner:
-  post_sh: ./mytest.lsf
+  post_sh: ./data/test_pipeline/post.sh
   post_cmd:
     - 'bsub'
   query_cmd:
@@ -18,7 +18,7 @@ jobs:
         path: ./INCAR
       - type: filecollector
         name: POSCAR
-        path: ./test_pipeline/*
+        path: ./data/test_pipeline/poscar_all/*
     result_collector_list:
       - type: filecollector
         name: CONTCAR
