@@ -27,7 +27,9 @@ class VaspTask(Task):
 
 
 class Runner(BaseModel):
-    push_sh: str = 'push.sh'
+    post_sh: str = 'post.sh'
+    post_cmd: List[str] = ['bsub']
+    query_cmd: List[str] = ['bjobs']
 
 
 class Jobs(Task):

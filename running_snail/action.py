@@ -52,13 +52,26 @@ def create_task_dir(workspace: str, task_id: str, input_files: list, copy_mode=T
     return str(task_dir.absolute())
 
 
-def prepare_potcar():
+def get_atom_set_in_poscar(poscar):
+    return {}
+
+
+def prepare_potcar(potcar_dir, atom_set, dst_path):
     """
     准备potcar文件
 
     :return:
     """
-    pass
+    potcar_dir = pathlib.Path(potcar_dir)
+    potcar_list = ''
+    for atom in atom_set:
+        potcar_file = potcar_dir / atom / 'POTCAR'
+        potcar_list += '"%s"' % str(potcar_file.absolute())
+
+    cmd = 'cat %s > %s' % (potcar_list, dst_path)
+    ret = os.system(cmd)
+    if ret != 0:
+        raise RuntimeError('获取POTCAR错误 %s' % cmd)
 
 
 def push_task(workspace, cmd, push_script_code: str) -> str:
@@ -109,6 +122,7 @@ def write_task_status(task_status_file: pathlib.Path, task_status: list):
     with task_status_file.open('w') as f:
         return yaml.dump(task_status, f, yaml.SafeDumper)
 
+
 def get_task_status():
     """
     获取任务状态
@@ -153,7 +167,7 @@ def init_pipeline_runner(runner):
     :return:
     """
     # TODO: 需要解耦
-    push_sh = pathlib.Path(runner.push_sh)
+    push_sh = pathlib.Path(runner.post_sh)
     if not push_sh.exists():
         raise ValueError('找不到提交脚本 %s', str(push_sh.absolute()))
 

@@ -4,6 +4,10 @@ env:
 
 runner:
   post_sh: ./mytest.lsf
+  post_cmd:
+    - 'bsub'
+  query_cmd:
+    - 'bjobs'
 
 jobs:
   - type: vaspjobs
