@@ -1,4 +1,5 @@
 import re
+import time
 import unittest
 import threading
 import socket
@@ -13,7 +14,7 @@ class TaskServer(threading.Thread):
     def __init__(self):
         super(TaskServer, self).__init__()
         self.setDaemon(True)
-        self.address = ('127.0.0.1', 21240)
+        self.address = ('127.0.0.1', 2999)
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.bind(self.address)
         s.listen()
@@ -31,7 +32,7 @@ class TaskServer(threading.Thread):
                     cmd, cache = cache[:sp], cache[sp + 1:]
                     self.action(cmd, c)
             except socket.error:
-                break
+                self.socket.close()
 
     def action(self, cmd, client):
         if b'post' in cmd:
@@ -67,7 +68,6 @@ class TestPipeline(unittest.TestCase):
             msg = c.recv(100)
         self.assertEqual(b'\n', msg)
         c.close()
-        ts.socket.close()
 
     def test_model(self):
         pipeline_yaml = load_pipeline_yaml(self.test_data / 'pipeline.yaml')
