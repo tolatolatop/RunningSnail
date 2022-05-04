@@ -7,12 +7,12 @@ runner:
   post_cmd:
     - 'python3'
     - '-m'
-    - 'test.task_server'
+    - 'running_snail.task_server'
     - 'post'
   query_cmd:
     - 'python3'
     - '-m'
-    - 'test.task_server'
+    - 'running_snail.task_server'
     - 'query'
 
 jobs:

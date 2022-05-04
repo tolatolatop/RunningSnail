@@ -4,7 +4,7 @@ import socket
 
 from running_snail.pipeline import *
 from running_snail.action import load_pipeline_yaml
-from test.task_server import TaskServer
+from running_snail.task_server import TaskServer
 
 
 class TestPipeline(unittest.TestCase):
