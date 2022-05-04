@@ -52,7 +52,7 @@ class TaskServer(threading.Thread):
 class TestPipeline(unittest.TestCase):
 
     def setUp(self) -> None:
-        self.test_data = pathlib.Path(__file__).parent
+        self.test_data = pathlib.Path(__file__).parent / 'data'
 
     def test_task_server(self):
         ts = TaskServer()
