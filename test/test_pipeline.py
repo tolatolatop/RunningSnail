@@ -4,6 +4,7 @@ import socket
 import logging
 
 logging.basicConfig(
+    filemode='w',
     filename='/tmp/test_pipeline.log',
     level=logging.DEBUG,
     format='%(name)s:%(lineno)d %(message)s'
