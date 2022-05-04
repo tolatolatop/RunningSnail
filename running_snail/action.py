@@ -85,7 +85,7 @@ def push_task(workspace, cmd, push_script_code: str) -> str:
     :return:
     """
     logger.debug('execute [ %s ] to push task', ' '.join(cmd))
-    p = sp.Popen(cmd, shell=False, stdin=sp.PIPE, stderr=sp.STDOUT, stdout=sp.PIPE, cwd=workspace)
+    p = sp.Popen(cmd, shell=False, stdin=sp.PIPE, stderr=sp.PIPE, stdout=sp.PIPE, cwd=workspace)
     out_msg, err_msg = p.communicate(input=push_script_code.encode())
     ret_msg = out_msg.decode() + ' | ' + err_msg.decode()
     logger.debug('ret msg is %s', ret_msg)
@@ -115,7 +115,7 @@ def query_task_status(cmd) -> dict:
     :return:
     """
     logger.debug('execute [ %s ] to query task', ' '.join(cmd))
-    p = sp.Popen(cmd, shell=False, stdin=sp.PIPE, stderr=sp.STDOUT, stdout=sp.PIPE)
+    p = sp.Popen(cmd, shell=False, stdin=sp.PIPE, stderr=sp.PIPE, stdout=sp.PIPE)
     out_msg, err_msg = p.communicate()
     ret_msg = out_msg.decode() + ' | ' + err_msg.decode()
 
