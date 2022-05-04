@@ -1,7 +1,9 @@
+import log
 import pathlib
 import time
 from collections import OrderedDict
 from typing import List, Dict
+import logging
 
 from . import model
 from . import action
@@ -14,6 +16,8 @@ jobs_map = {
 collector_map = {
     'filecollector': model.FileCollector
 }
+
+logger = logging.getLogger(__file__)
 
 
 class PipeLine(object):
@@ -107,6 +111,7 @@ class PipeLine(object):
         input_batch = action.create_input_args_batch(collections)
         folder_name = job.name.replace(' ', '_').lower()
         task_id_list = action.generate_task_id(folder_name, len(input_batch))
+        logger.info('init %s job')
         return tuple(zip(task_id_list, input_batch))
 
     def run_vasp_jobs(self, vasp_jobs: tuple):
