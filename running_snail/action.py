@@ -1,5 +1,7 @@
 import logging
 import os
+import re
+
 from running_snail import log
 import pathlib
 import shutil
@@ -88,7 +90,7 @@ def push_task(workspace, cmd, push_script_code: str) -> str:
     p = sp.Popen(cmd, shell=False, stdin=sp.PIPE, stderr=sp.PIPE, stdout=sp.PIPE, cwd=workspace)
     out_msg, err_msg = p.communicate(input=push_script_code.encode())
     ret_msg = out_msg.decode() + ' | ' + err_msg.decode()
-    logger.debug('ret msg is %s', ret_msg)
+    logger.debug('ret msg is %s', ret_msg.replace('\n', r'\n'))
 
     if p.returncode != 0:
         err_msg = 'run [ %s < %s ] error, return %d %s' % (
@@ -119,15 +121,25 @@ def query_task_status(cmd) -> dict:
     out_msg, err_msg = p.communicate()
     ret_msg = out_msg.decode() + ' | ' + err_msg.decode()
 
-    logger.debug('ret msg is %s', ret_msg)
+    logger.debug('ret msg is %s', ret_msg.replace('\n', r'\n'))
     if p.returncode != 0:
         err_msg = 'run [ %s ] error, return %d %s' % (
             ' '.join(cmd),
             p.returncode,
-            out_msg.decode(),
+            err_msg,
         )
         raise RuntimeError(err_msg)
-    return {}
+
+    out = parse_out_msg_to_status(out_msg)
+    return out
+
+
+def parse_out_msg_to_status(out_msg):
+    out = {}
+    status = re.findall(r'(\d+)\s+(\d+)', out_msg.decode())
+    for t_id, status in status:
+        out[t_id] = 'finished' if status < b'0' else 'running'
+    return out
 
 
 def write_task_status(task_status_file: pathlib.Path, task_status: list):

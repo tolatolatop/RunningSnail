@@ -17,7 +17,7 @@ collector_map = {
     'filecollector': model.FileCollector
 }
 
-logger = logging.getLogger(__file__)
+logger = logging.getLogger(__name__)
 
 
 class PipeLine(object):
@@ -135,6 +135,7 @@ class PipeLine(object):
         for task_dir, task_status in self.task_status.items():
             if task_status.status not in ('finished', 'unknown'):
                 out[task_dir] = task_status
+        logger.info('task list: %s', str(out))
         return out
 
     def update_vasp_status(self, task_list):
@@ -148,6 +149,7 @@ class PipeLine(object):
 
         write_data = [t.dict() for t in self.task_status.values()]
         action.write_task_status(self._task_status_file, write_data)
+        logger.debug('current task status is %s', str(self.task_status))
         time.sleep(0.5)
 
     def wait_vasp_jobs_finished(self, task_list):
