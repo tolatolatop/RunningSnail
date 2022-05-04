@@ -52,7 +52,7 @@ class TaskServer(threading.Thread):
 class TestPipeline(unittest.TestCase):
 
     def setUp(self) -> None:
-        self.test_data = pathlib.Path('./data')
+        self.test_data = pathlib.Path(__file__).parent
 
     def test_task_server(self):
         ts = TaskServer()
@@ -68,10 +68,6 @@ class TestPipeline(unittest.TestCase):
             msg = c.recv(100)
         self.assertEqual(b'\n', msg)
         c.close()
-
-    def test_model(self):
-        pipeline_yaml = load_pipeline_yaml(self.test_data / 'pipeline.yaml')
-        pipeline = PipeLine(pipeline_yaml)
 
     def test_pipeline_run(self):
         pipeline_yaml = load_pipeline_yaml(self.test_data / 'test_pipeline.yaml')
