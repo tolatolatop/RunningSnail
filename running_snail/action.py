@@ -138,7 +138,7 @@ def parse_out_msg_to_status(out_msg):
     out = {}
     status = re.findall(r'(\d+)\s+(\d+)', out_msg.decode())
     for t_id, status in status:
-        out[t_id] = 'finished' if status < b'0' else 'running'
+        out[t_id] = 'finished' if int(status) <= 0 else 'running'
     return out
 
 
