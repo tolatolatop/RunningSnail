@@ -3,15 +3,17 @@ import unittest
 import socket
 import logging
 
-from running_snail.pipeline import *
-from running_snail.action import load_pipeline_yaml
-from running_snail.task_server import TaskServer
-
 logging.basicConfig(
     filename='/tmp/test_pipeline.log',
     level=logging.DEBUG,
     format='%(name)s:%(lineno)d %(message)s'
 )
+
+from running_snail.pipeline import *
+from running_snail.action import load_pipeline_yaml
+from running_snail.task_server import TaskServer
+
+
 
 
 class TestPipeline(unittest.TestCase):
