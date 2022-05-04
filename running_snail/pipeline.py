@@ -124,10 +124,11 @@ class PipeLine(object):
             task_list[task_dir] = sub_id
         return task_list
 
-    def push_task(self, task_dir, *args, **kwargs):
+    def push_task(self, task_dir: str, *args, **kwargs):
         if task_dir in self.task_status.keys():
-            return self.task_status[task_dir]
-        return action.push_task(task_dir, *args, **kwargs)
+            return self.task_status[task_dir].task_id
+        task_id = action.push_task(task_dir, *args, **kwargs)
+        self.task_status[task_dir] = model.TaskStatus()
 
     @property
     def need_update_task_status(self):
@@ -138,7 +139,7 @@ class PipeLine(object):
         logger.info('task list: %s', str(out))
         return out
 
-    def update_vasp_status(self, task_list):
+    def update_vasp_status(self):
         query_task_status = action.query_task_status(self._model.runner.query_cmd)
         for task_dir, task_status in self.need_update_task_status.items():
             task_id = task_status.task_id
@@ -161,7 +162,7 @@ class PipeLine(object):
         has_unfinished_jobs = True
         while has_unfinished_jobs:
             has_unfinished_jobs = False
-            self.update_vasp_status(task_list)
+            self.update_vasp_status()
             for task_status in self.task_status.values():
                 has_unfinished_jobs |= (task_status.status not in finished_status)
 
