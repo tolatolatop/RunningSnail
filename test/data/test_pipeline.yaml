@@ -5,10 +5,14 @@ env:
 runner:
   post_sh: ./data/test_pipeline/post.sh
   post_cmd:
-    - 'telnet'
-    - '127.0.0.1'
-    - '2999'
+    - 'python3'
+    - '-m'
+    - 'test.task_server'
+    - 'post'
   query_cmd:
+    - 'python3'
+    - '-m'
+    - 'test.task_server'
     - 'query'
 
 jobs:
