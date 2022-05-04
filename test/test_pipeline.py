@@ -1,3 +1,4 @@
+import os
 import re
 import time
 import unittest
@@ -70,10 +71,13 @@ class TestPipeline(unittest.TestCase):
         c.close()
 
     def test_pipeline_run(self):
+        pwd = os.getcwd()
+        os.chdir(self.test_data.parent)
         pipeline_yaml = load_pipeline_yaml(self.test_data / 'test_pipeline.yaml')
         pipeline = PipeLine(pipeline_yaml)
 
         pipeline.run()
+        os.chdir(pwd)
 
 
 if __name__ == '__main__':
