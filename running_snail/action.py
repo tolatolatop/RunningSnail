@@ -119,6 +119,8 @@ def query_task_status(cmd) -> dict:
 
 
 def write_task_status(task_status_file: pathlib.Path, task_status: list):
+    if not task_status_file.parent.is_dir():
+        task_status_file.mkdir(exist_ok=True, parents=True)
     with task_status_file.open('w') as f:
         return yaml.dump(task_status, f, yaml.SafeDumper)
 
