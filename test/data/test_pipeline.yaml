@@ -21,7 +21,7 @@ jobs:
     input_collector_list:
       - type: filecollector
         name: INCAR
-        path: ./INCAR
+        path: ./data/test_pipeline/INCAR
       - type: filecollector
         name: POSCAR
         path: ./data/test_pipeline/poscar_all/*
