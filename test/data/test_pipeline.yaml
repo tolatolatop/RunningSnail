@@ -9,11 +9,7 @@ runner:
     - '127.0.0.1'
     - '2999'
   query_cmd:
-    - 'telnet'
-    - '-e'
     - 'query'
-    - '127.0.0.1'
-    - '2999'
 
 jobs:
   - type: vaspjobs
