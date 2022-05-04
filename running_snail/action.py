@@ -137,8 +137,8 @@ def query_task_status(cmd) -> dict:
 def parse_out_msg_to_status(out_msg):
     out = {}
     status = re.findall(r'(\d+)\s+(\d+)', out_msg.decode())
-    for t_id, status in status:
-        out[t_id] = 'finished' if int(status) <= 0 else 'running'
+    for t_id, s in status:
+        out[t_id] = 'finished' if int(s) <= 0 else 'running'
     return out
 
 
