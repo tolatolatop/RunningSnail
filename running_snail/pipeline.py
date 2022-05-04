@@ -1,4 +1,4 @@
-import log
+from running_snail import log
 import pathlib
 import time
 from collections import OrderedDict
