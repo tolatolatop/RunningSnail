@@ -126,7 +126,7 @@ class PipeLine(object):
     def need_update_task_status(self):
         out = {}
         for task_dir, task_status in self.task_status.items():
-            if task_status.status != 'finished':
+            if task_status.status not in ('finished', 'unknown'):
                 out[task_dir] = task_status
         return out
 
