@@ -5,9 +5,9 @@ env:
 runner:
   post_sh: ./data/test_pipeline/post.sh
   post_cmd:
-    - 'bsub'
+    - 'telnet 127.0.0.1 2999'
   query_cmd:
-    - 'bjobs'
+    - 'telnet -e query 127.0.0.1 2999'
 
 jobs:
   - type: vaspjobs
