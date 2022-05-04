@@ -128,7 +128,13 @@ class PipeLine(object):
         if task_dir in self.task_status.keys():
             return self.task_status[task_dir].task_id
         task_id = action.push_task(task_dir, *args, **kwargs)
-        self.task_status[task_dir] = model.TaskStatus()
+        task_status = model.TaskStatus(
+            path=task_dir,
+            task_id=task_id,
+            type='vasp',
+            status='wait'
+        )
+        self.task_status[task_dir] = task_status
 
     @property
     def need_update_task_status(self):
