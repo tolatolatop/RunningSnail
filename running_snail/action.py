@@ -1,10 +1,14 @@
+import logging
 import os
+from running_snail import log
 import pathlib
 import shutil
 from itertools import product
 import subprocess as sp
 
 import yaml
+
+logger = logging.getLogger(__name__)
 
 
 def load_pipeline_yaml(path: pathlib.Path):
@@ -80,17 +84,21 @@ def push_task(workspace, cmd, push_script_code: str) -> str:
 
     :return:
     """
+    logger.debug('execute [ %s ] to push task', ' '.join(cmd))
     p = sp.Popen(cmd, shell=False, stdin=sp.PIPE, stderr=sp.STDOUT, stdout=sp.PIPE, cwd=workspace)
-    stdout, stderr = p.communicate(input=push_script_code.encode())
+    out_msg, err_msg = p.communicate(input=push_script_code.encode())
+    ret_msg = out_msg.decode() + ' | ' + err_msg.decode()
+    logger.debug('ret msg is %s', ret_msg)
+
     if p.returncode != 0:
         err_msg = 'run [ %s < %s ] error, return %d %s' % (
             ' '.join(cmd),
             push_script_code,
             p.returncode,
-            stdout.decode(),
+            out_msg.decode(),
         )
         return err_msg
-    return stdout.decode().strip()
+    return out_msg.decode().strip()
 
 
 def load_task_status(task_status_file: pathlib.Path):
@@ -106,13 +114,17 @@ def query_task_status(cmd) -> dict:
 
     :return:
     """
+    logger.debug('execute [ %s ] to query task', ' '.join(cmd))
     p = sp.Popen(cmd, shell=False, stdin=sp.PIPE, stderr=sp.STDOUT, stdout=sp.PIPE)
-    stdout, stderr = p.communicate()
+    out_msg, err_msg = p.communicate()
+    ret_msg = out_msg.decode() + ' | ' + err_msg.decode()
+
+    logger.debug('ret msg is %s', ret_msg)
     if p.returncode != 0:
         err_msg = 'run [ %s ] error, return %d %s' % (
             ' '.join(cmd),
             p.returncode,
-            stdout.decode(),
+            out_msg.decode(),
         )
         raise RuntimeError(err_msg)
     return {}
