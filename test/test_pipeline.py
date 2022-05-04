@@ -42,12 +42,12 @@ class TaskServer(threading.Thread):
             client.send(task_id.encode() + b'\n')
 
         if b'query' in cmd:
+            msg = ''
             for t, v in self.task_map.items():
                 if v > -3:
-                    msg = '%s\t%s\n' % (t, v)
+                    msg += '%s\t%s\n' % (t, v)
                     self.task_map[t] -= 1
-                    client.send(msg.encode())
-            client.send(b'\n')
+            client.send(msg.encode() + b'\n')
 
 
 class TestPipeline(unittest.TestCase):
