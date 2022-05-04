@@ -1,4 +1,5 @@
 import pathlib
+import time
 from collections import OrderedDict
 from typing import List, Dict
 
@@ -111,8 +112,9 @@ class PipeLine(object):
     def run_vasp_jobs(self, vasp_jobs: tuple):
         task_list = {}
         for task_id, input_batch in vasp_jobs:
-            task_dir = action.create_task_dir(self._model.env.workspace, task_id, input_batch, copy_mode=self.copy_mode)
             # TODO: 添加针对任务的修改 修改方式是幂等
+            task_dir = action.create_task_dir(self._model.env.workspace, task_id, input_batch, copy_mode=self.copy_mode)
+
             sub_id = self.push_task(task_dir, self._model.runner.post_cmd, self.push_script_code)
             task_list[task_dir] = sub_id
         return task_list
