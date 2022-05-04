@@ -18,22 +18,30 @@ class TaskServer(threading.Thread):
         self.address = ('127.0.0.1', 2999)
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.bind(self.address)
-        s.listen()
+        s.listen(4)
         self.socket = s
         self.task_map = {}
+        self.stop = threading.Event()
+        self.stop.clear()
 
     def run(self):
-        cache = b''
-        c, ip = self.socket.accept()
+        while not self.stop.is_set():
+            c, _ = self.socket.accept()
+            t = threading.Thread(target=self.handle, args=(c, ))
+            t.start()
+        self.socket.close()
+
+    def handle(self, client):
+        cache = client.recv(1080)
         while True:
             try:
-                cache += c.recv(1080)
                 sp = cache.find(b'\n')
                 if sp != -1:
                     cmd, cache = cache[:sp], cache[sp + 1:]
-                    self.action(cmd, c)
+                    self.action(cmd, client)
+                cache += client.recv(1080)
             except socket.error:
-                self.socket.close()
+                break
 
     def action(self, cmd, client):
         if b'post' in cmd:
@@ -68,9 +76,13 @@ class TestPipeline(unittest.TestCase):
             c.send(b'query\n')
             msg = c.recv(100)
         self.assertEqual(b'\n', msg)
+        ts.stop.set()
         c.close()
 
     def test_pipeline_run(self):
+        ts = TaskServer()
+        ts.start()
+
         pwd = os.getcwd()
         os.chdir(self.test_data.parent)
         pipeline_yaml = load_pipeline_yaml(self.test_data / 'test_pipeline.yaml')
@@ -78,6 +90,7 @@ class TestPipeline(unittest.TestCase):
 
         pipeline.run()
         os.chdir(pwd)
+        ts.stop.set()
 
 
 if __name__ == '__main__':
