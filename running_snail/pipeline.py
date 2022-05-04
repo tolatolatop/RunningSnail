@@ -141,6 +141,7 @@ class PipeLine(object):
 
         write_data = [t.dict() for t in self.task_status.values()]
         action.write_task_status(self._task_status_file, write_data)
+        time.sleep(0.5)
 
     def wait_vasp_jobs_finished(self, task_list):
         finished_status = (
