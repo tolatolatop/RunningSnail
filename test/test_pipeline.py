@@ -21,15 +21,19 @@ class TaskServer(threading.Thread):
         s.listen(4)
         self.socket = s
         self.task_map = {}
-        self.stop = threading.Event()
-        self.stop.clear()
 
     def run(self):
-        while not self.stop.is_set():
-            c, _ = self.socket.accept()
-            t = threading.Thread(target=self.handle, args=(c, ))
-            t.start()
+        while True:
+            try:
+                c, _ = self.socket.accept()
+                t = threading.Thread(target=self.handle, args=(c, ))
+                t.start()
+            except socket.error as e:
+                break
+
+    def stop(self):
         self.socket.close()
+        self.join()
 
     def handle(self, client):
         cache = client.recv(1080)
@@ -76,7 +80,7 @@ class TestPipeline(unittest.TestCase):
             c.send(b'query\n')
             msg = c.recv(100)
         self.assertEqual(b'\n', msg)
-        ts.stop.set()
+        ts.stop()
         c.close()
 
     def test_pipeline_run(self):
@@ -90,7 +94,7 @@ class TestPipeline(unittest.TestCase):
 
         pipeline.run()
         os.chdir(pwd)
-        ts.stop.set()
+        ts.stop()
 
 
 if __name__ == '__main__':
