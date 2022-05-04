@@ -80,6 +80,7 @@ def push_task(workspace, cmd, push_script_code: str) -> str:
 
     :return:
     """
+    cmd = cmd.split() if isinstance(cmd, str) else cmd
     p = sp.Popen(cmd, shell=False, stdin=sp.PIPE, stderr=sp.STDOUT, stdout=sp.PIPE, cwd=workspace)
     stdout, stderr = p.communicate(input=push_script_code.encode())
     if p.returncode != 0:
@@ -106,6 +107,7 @@ def query_task_status(cmd) -> dict:
 
     :return:
     """
+    cmd = cmd.split() if isinstance(cmd, str) else cmd
     p = sp.Popen(cmd, shell=False, stdin=sp.PIPE, stderr=sp.STDOUT, stdout=sp.PIPE)
     stdout, stderr = p.communicate()
     if p.returncode != 0:
