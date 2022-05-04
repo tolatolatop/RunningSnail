@@ -111,7 +111,7 @@ class PipeLine(object):
         input_batch = action.create_input_args_batch(collections)
         folder_name = job.name.replace(' ', '_').lower()
         task_id_list = action.generate_task_id(folder_name, len(input_batch))
-        logger.info('init %s job')
+        logger.info('the number of %s jobs is %d', folder_name, len(input_batch))
         return tuple(zip(task_id_list, input_batch))
 
     def run_vasp_jobs(self, vasp_jobs: tuple):

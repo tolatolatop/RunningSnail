@@ -14,8 +14,6 @@ from running_snail.action import load_pipeline_yaml
 from running_snail.task_server import TaskServer
 
 
-
-
 class TestPipeline(unittest.TestCase):
 
     def setUp(self) -> None:
