@@ -127,7 +127,7 @@ class PipeLine(object):
     def push_task(self, task_dir, *args, **kwargs):
         if task_dir in self.task_status.keys():
             return self.task_status[task_dir]
-        return action.push_task(*args, **kwargs)
+        return action.push_task(task_dir, *args, **kwargs)
 
     @property
     def need_update_task_status(self):
